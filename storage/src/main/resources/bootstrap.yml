@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: storage-rest
+  profiles:
+    active: production
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+  zipkin:
+      baseUrl: http://localhost:9411/
+  boot:
+      admin:
+         url: http://localhost:9090/

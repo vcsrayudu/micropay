@@ -1,0 +1,37 @@
+FROM 10.8.176.180:5000/dfc/centos/stateless/dfc:16.4.0030.0013
+MAINTAINER "VCS Rayudu" <cvidudal@opentext.com>
+
+ENV DFC_DOCKER  /opt/dfc_docker
+
+ENV DOCUMENTUM_SHARED /opt/dctm
+
+ENV JAVA_HOME $DOCUMENTUM_SHARED/java/1.8.0_152
+
+ENV DOCUMENTUM /opt/dctm
+
+ENV PATH $JAVA_HOME/bin:$PATH
+ENV CLASSPATH $DOCUMENTUM_SHARED/dfc/dfc.jar:$DOCUMENTUM/config:$CLASSPATH
+COPY ./dfc_regr.sh $DFC_DOCKER
+RUN cd $DFC_DOCKER && \
+    chmod -R 775 $DFC_DOCKER && \
+   	wget --ftp-user=Administrator --ftp-password=password ftp://10.194.45.254/dfcRegr-suites.zip && \
+	wget --ftp-user=Administrator --ftp-password=password ftp://10.194.45.254/DFCPopulator.zip && \
+	chmod -R 775 $DFC_DOCKER  && \
+    unzip ${DFC_DOCKER}/dfcRegr-suites.zip && \
+	unzip ${DFC_DOCKER}/DFCPopulator.zip && \
+	chmod -R 775 ${DFC_DOCKER} && \
+	rm -rf ${DFC_DOCKER}/dfcRegr-suites.zip &&\
+	rm -rf ${DFC_DOCKER}/DFCPopulator.zip 
+ENV ANT_HOME ${DFC_DOCKER}/testdriver-tests/thirdparty/ant
+ENV PATH ${ANT_HOME}/bin:$PATH
+ENV DM_HOME $DFC_DOCKER/testdriver-tests
+ENV DFC_POPULATOR $DFC_DOCKER/DFCPopulator
+ENV CLASSPATH $DFC_POPULATOR/qa-tools.jar:$DFC_POPULATOR/qa-utils.jar:$DFC_POPULATOR/storageaware_Regr.jar:$CLASSPATH
+
+
+EXPOSE 60000
+CMD .${DFC_DOCKER}/dfc_regr.sh
+	          
+
+
+
